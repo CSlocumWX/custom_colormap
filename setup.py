@@ -11,7 +11,7 @@ with open('LICENSE') as f:
 
 setup(
     name='custom_colormaps',
-    version='1.0c',
+    version='2.0',
     description='A small routine to generate custom colormaps for Matplotlib',
     long_description=readme,
     author='Chris Slocum',
