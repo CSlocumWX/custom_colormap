@@ -157,8 +157,8 @@ def create_breakpoint_colormap(colors,
         values. RGB data assumes data types are floats for [0..1] or
         integers for [0..255].
     position : array-like, optional
-        A list of monotonic position values corresponding to each color
-        pair. If None, linear spacing is assumed.
+        A list of monotonic position start-stop pairs corresponding to each
+        color pair. If None, linear spacing is assumed.
     name : str, optional
         Name of the colormap.
 
@@ -175,6 +175,10 @@ def create_breakpoint_colormap(colors,
         position[:, 1] = tmp[1:]
     if len(position) != len(colors):
         raise ValueError("position length must be the same as colors")
+    if any(len(elem) != 2 for elem in position):
+        raise ValueError("Each element in position must have a length of 2")
+    if any(len(elem) != 2 for elem in colors):
+        raise ValueError("Each element in colors must have a length of 2")
     # get the max/min values from position
     vmin = np.min(position)
     vmax = np.max(position)
@@ -196,7 +200,6 @@ def create_breakpoint_colormap(colors,
         # Update y0
         pos_stop = pos[1]
         y0 = convert_color(color[1])
-    # Must finish with 1.0 !
     x = normalize(pos_stop, vmin, vmax)
     segmentdata['red'].append((x, y0[0], y1[0]))
     segmentdata['green'].append((x, y0[1], y1[1]))
