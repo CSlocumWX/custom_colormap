@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "custom_colormaps"
 dynamic = ["version"]
-description = 'A small routine to generate custom colormaps for Matplotlib',
+description = 'A small routine to generate custom colormaps for Matplotlib'
 readme = "README.md"
 license = {file = "LICENSE"}
 authors = [
