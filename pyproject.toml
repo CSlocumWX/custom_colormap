@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "custom_colormaps"
+dynamic = ["version"]
+description = 'A small routine to generate custom colormaps for Matplotlib',
+readme = "README.md"
+license = {file = "LICENSE"}
+authors = [
+    {name = 'Chris Slocum', email = 'Christopher.Slocum@colostate.edu'}
+]
+dependencies = [
+  "numpy",
+  "matplotlib",
+]
+
+[project.urls]
+Repository = "https://github.com/CSlocumWX/custom_colormap"
+
+[tool.setuptools.dynamic]
+version = {attr = "custom_colormaps.__version__"}
