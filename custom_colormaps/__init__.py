@@ -16,14 +16,19 @@ Notes
 * 20240325 -- Added breakpoint colormap generator
 """
 import ast
+from typing import Optional, Union, Tuple
+from numbers import Number
 import numpy as np
+import numpy.typing as npt
 from matplotlib.colors import ColorConverter, LinearSegmentedColormap
 
 __version__ = "2.0"
 __author__ = "Chris Slocum"
 
 
-def normalize(value, vmin=None, vmax=None):
+def normalize(value: Union[Number, npt.ArrayLike],
+              vmin: Optional[Number] = None,
+              vmax: Optional[Number] = None) -> Union[Number, np.ndarray]:
     """
     Normalize value.
 
@@ -50,7 +55,7 @@ def normalize(value, vmin=None, vmax=None):
     return norm
 
 
-def convert_color(color):
+def convert_color(color: str) -> Tuple[Number, Number, Number]:
     """
     Convert color to RGB.
 
@@ -81,13 +86,13 @@ def convert_color(color):
     return color
 
 
-def create_colormap(colors,
-                    position=None,
-                    bit=False,
-                    reverse=False,
-                    name='custom_colormap'):
+def create_colormap(colors: npt.ArrayLike,
+                    position: Optional[npt.ArrayLike] = None,
+                    bit: bool = False,
+                    reverse: bool = False,
+                    name: str = 'custom_colormap') -> LinearSegmentedColormap:
     """
-    returns a linear custom colormap
+    Returns a linear custom colormap.
 
     Parameters
     ----------
@@ -99,16 +104,14 @@ def create_colormap(colors,
     position : array-like, optional
         A list of monotonic position values corresponding to each color.
         If None, linear spacing is assumed.
-    name : str, optional
-        Name of the colormap.
-    bit : Boolean
+    bit : Boolean, default=False
         8-bit [0 to 255] (in which bit must be set to
         True when called) or arithmetic [0 to 1] (default)
         Note: script still checks RGB data.
-    reverse : Boolean
-        If you want to flip the scheme
-    name : string
-        name of the scheme if you plan to save it
+    reverse : Boolean, default=False
+        If you want to flip the colormap
+    name : string, default='custom_colormap'
+        Name of the colormap
 
     Returns
     -------
@@ -143,9 +146,10 @@ def create_colormap(colors,
     return cmap
 
 
-def create_breakpoint_colormap(colors,
-                               position=None,
-                               name='custom_breakpoint_colormap'):
+def create_breakpoint_colormap(
+        colors: npt.ArrayLike,
+        position: Optional[npt.ArrayLike] = None,
+        name: str = 'custom_breakpoint_colormap') -> LinearSegmentedColormap:
     """
     Create a LinearSegmentedColormap instance with breakpoints.
 
@@ -206,34 +210,3 @@ def create_breakpoint_colormap(colors,
     segmentdata['blue'].append((x, y0[2], y1[2]))
     cmap = LinearSegmentedColormap(name, segmentdata)
     return cmap
-
-
-if __name__ == "__main__":
-    # An example of how to use make_cmap
-    import matplotlib.pyplot as plt
-    fig = plt.figure()
-    ax = fig.add_subplot(311)
-    # Create a list of RGB tuples
-    colors = [(255, 0, 0), (255, 255, 0), (255, 255, 255), (0, 157, 0),
-              (0, 0, 255)]    # This example uses the 8-bit RGB
-    # Call the function make_cmap which returns your colormap
-    my_cmap = create_colormap(colors, bit=True)
-    # Use your colormap
-    plt.pcolor(np.random.rand(25, 50), cmap=my_cmap)
-    plt.colorbar()
-    ax = fig.add_subplot(312)
-    colors = [(1, 1, 1), (0.5, 0, 0)]    # This example uses the arithmetic RGB
-    # If you are only going to use your colormap once you can
-    # take out a step.
-    plt.pcolor(np.random.rand(25, 50), cmap=create_colormap(colors))
-    plt.colorbar()
-
-    ax = fig.add_subplot(313)
-    colors = [(0.4, 0.2, 0.0), (1, 1, 1), (0, 0.3, 0.4)]
-    # Create an array or list of positions from 0 to 1.
-    position = [0, 0.3, 1]
-    plt.pcolor(np.random.rand(25, 50),
-               cmap=create_colormap(colors, position=position))
-    plt.colorbar()
-    plt.savefig("example_custom_colormap.png")
-    plt.show()
