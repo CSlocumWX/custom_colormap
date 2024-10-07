@@ -241,5 +241,3 @@ def create_breakpoint_colormap(
     segmentdata['blue'].append((x, y0[2], y1[2]))
     cmap = LinearSegmentedColormap(name, segmentdata)
     return cmap
-
-
