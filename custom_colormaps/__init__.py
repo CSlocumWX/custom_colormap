@@ -16,25 +16,27 @@ Notes
 * 20240325 -- Added breakpoint colormap generator
 """
 import ast
-from typing import Optional, Union, Tuple
-from numbers import Number
+from typing import Optional, Union, Sequence
+from typing_extensions import TypeAlias
 import numpy as np
 import numpy.typing as npt
 from matplotlib.colors import ColorConverter, LinearSegmentedColormap
 
+Number = Union[int, float, np.integer, np.floating]
+RGBType: TypeAlias = tuple[float, float, float]
 __version__ = "2.0"
 __author__ = "Chris Slocum"
 
 
-def normalize(value: Union[Number, npt.ArrayLike],
-              vmin: Optional[Number] = None,
-              vmax: Optional[Number] = None) -> Union[Number, np.ndarray]:
+def normalize(value: Union[Number, np.ndarray],
+              vmin: Number,
+              vmax: Number) -> Union[Number, np.ndarray]:
     """
     Normalize value.
 
     Parameters
     ----------
-    value : float or array-like
+    value : array-like
         The value(s) that need normalizing
     vmin : float, optional
         The minimum value for all values
@@ -43,19 +45,24 @@ def normalize(value: Union[Number, npt.ArrayLike],
 
     Returns
     -------
-    value : float or array-like
+    value : array-like
         The normalized value(s)
+
+    Raises
+    ------
+    ValueError
+        If value is scaler and vmin/vmax undefined
     """
-    if vmin is None or vmax is None:
-        if not isinstance(value, (list, np.ndarray, np.generic)):
-            raise ValueError("Either define vmin/vmax or make value array-like")
-        vmin = np.min(value)
-        vmax = np.max(value)
-    norm = (value - vmin) / float(vmax - vmin)
+    #if vmin is None:
+    #    vmin = np.min(value)
+    #if vmax is None:
+    #    vmax = np.max(value)
+    diff = float(vmax - vmin)
+    norm = (value - vmin) / diff
     return norm
 
 
-def convert_color(color: str) -> Tuple[Number, Number, Number]:
+def convert_color(color: Union[str, Sequence, np.ndarray]) -> RGBType:
     """
     Convert color to RGB.
 
@@ -66,29 +73,61 @@ def convert_color(color: str) -> Tuple[Number, Number, Number]:
 
     Returns
     -------
-    color : tuple
-        RGB representation of color
+    ccolor : tuple
+        Converted RGB representation of color
     """
-    # convert ndarray type to matplotlib RGB [0..1]
-    if isinstance(color, (np.ndarray, np.generic)):
+    def covert_color_array(color: np.ndarray) -> RGBType:
+        """
+        Convert ndarray type to matplotlib RGB [0..1].
+
+        Parameters
+        ----------
+        color : array-like
+            RGB array color
+
+        Returns
+        -------
+        ccolor : tuple
+            matplotlib RGB [0..1]
+        """
         if np.issubdtype(color.dtype, np.integer):
-            color = color / 255.
-        color = ColorConverter().to_rgb(color)
-        return color
-    if any(isinstance(elem, int) and elem > 1 for elem in color):
-        color = tuple(elem / 255. for elem in color)
-    # Convert start/end color to string, tuple, whatever matplotlib RGB [0..1].
-    try:
-        color = ColorConverter().to_rgb(str(color))
-    except ValueError:
-        # Allow for tuples as well as string representations
-        color = ColorConverter().to_rgb(ast.literal_eval(str(color)))
-    return color
+            color /= 255.
+        ccolor = ColorConverter().to_rgb(color)
+        return ccolor
+
+    def covert_color_sequence(color: Sequence) -> RGBType:
+        """
+        Convert color tuple to matplotlib RGB [0..1].
+
+        Parameters
+        ----------
+        ccolor : list or tuple
+            RGB array color
+
+        Returns
+        -------
+        color : tuple
+            matplotlib RGB [0..1]
+        """
+        ccolor = tuple(elem / 255. for elem in color)
+        return ccolor
+
+    if isinstance(color, np.ndarray):
+        ccolor = covert_color_array(color)
+    elif isinstance(color, (tuple, list)) and \
+            any(isinstance(elem, int) and elem > 1 for elem in color):
+        ccolor = covert_color_sequence(color)
+    else:
+        try:
+            ccolor = ColorConverter().to_rgb(str(color))
+        except ValueError:
+            # Allow for tuples as well as string representations
+            ccolor = ColorConverter().to_rgb(ast.literal_eval(str(color)))
+    return ccolor
 
 
-def create_colormap(colors: npt.ArrayLike,
-                    position: Optional[npt.ArrayLike] = None,
-                    bit: bool = False,
+def create_colormap(colors: Union[Sequence, np.ndarray],
+                    position: Optional[Union[Sequence, np.ndarray]] = None,
                     reverse: bool = False,
                     name: str = 'custom_colormap') -> LinearSegmentedColormap:
     """
@@ -104,10 +143,6 @@ def create_colormap(colors: npt.ArrayLike,
     position : array-like, optional
         A list of monotonic position values corresponding to each color.
         If None, linear spacing is assumed.
-    bit : Boolean, default=False
-        8-bit [0 to 255] (in which bit must be set to
-        True when called) or arithmetic [0 to 1] (default)
-        Note: script still checks RGB data.
     reverse : Boolean, default=False
         If you want to flip the colormap
     name : string, default='custom_colormap'
@@ -131,24 +166,20 @@ def create_colormap(colors: npt.ArrayLike,
     if np.isclose(position[0], vmax):
         colors = colors[::-1]
         position = position[::-1]
-
-    if bit:
-        colors = np.array(
-            [tuple(map(lambda x: x / 255., color)) for color in colors])
-    segmentdata = {'red': [], 'green': [], 'blue': []}
+    segmentdata: dict = {'red': [], 'green': [], 'blue': []}
     for pos, color in zip(position, colors):
         x = normalize(pos, vmin, vmax)
-        color = convert_color(color)
-        segmentdata['red'].append((x, color[0], color[0]))
-        segmentdata['green'].append((x, color[1], color[1]))
-        segmentdata['blue'].append((x, color[2], color[2]))
+        ccolor = convert_color(color)
+        segmentdata['red'].append((x, ccolor[0], ccolor[0]))
+        segmentdata['green'].append((x, ccolor[1], ccolor[1]))
+        segmentdata['blue'].append((x, ccolor[2], ccolor[2]))
     cmap = LinearSegmentedColormap(name, segmentdata)
     return cmap
 
 
 def create_breakpoint_colormap(
-        colors: npt.ArrayLike,
-        position: Optional[npt.ArrayLike] = None,
+        colors: Union[Sequence, np.ndarray],
+        position: Optional[Union[Sequence, np.ndarray]] = None,
         name: str = 'custom_breakpoint_colormap') -> LinearSegmentedColormap:
     """
     Create a LinearSegmentedColormap instance with breakpoints.
@@ -190,10 +221,10 @@ def create_breakpoint_colormap(
     if np.isclose(position[0][0], vmax):
         raise ValueError("position must increase")
     # Note y0 in the first row and y1 in the last row are never used.
-    y0 = [0, 0, 0]
-    y1 = [1, 1, 1]
+    y0 = (0.0, 0.0, 0.0)
+    y1 = (1.0, 1.0, 1.0)
     # color dictionary for LinearSegmentedColormap
-    segmentdata = {'red': [], 'green': [], 'blue': []}
+    segmentdata: dict = {'red': [], 'green': [], 'blue': []}
     for pos, color in zip(position, colors):
         pos_start = pos[0]
         y1 = convert_color(color[0])
@@ -210,3 +241,5 @@ def create_breakpoint_colormap(
     segmentdata['blue'].append((x, y0[2], y1[2]))
     cmap = LinearSegmentedColormap(name, segmentdata)
     return cmap
+
+
