@@ -27,8 +27,7 @@ __version__ = "2.0"
 __author__ = "Chris Slocum"
 
 
-def normalize(value: Union[Number, np.ndarray],
-              vmin: Number,
+def normalize(value: Union[Number, np.ndarray], vmin: Number,
               vmax: Number) -> Union[Number, np.ndarray]:
     """
     Normalize value.
