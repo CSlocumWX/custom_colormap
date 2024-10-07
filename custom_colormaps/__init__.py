@@ -19,7 +19,6 @@ import ast
 from typing import Optional, Union, Sequence
 from typing_extensions import TypeAlias
 import numpy as np
-import numpy.typing as npt
 from matplotlib.colors import ColorConverter, LinearSegmentedColormap
 
 Number = Union[int, float, np.integer, np.floating]
