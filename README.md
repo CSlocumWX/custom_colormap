@@ -12,7 +12,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 fig = plt.figure()
 colors = [(255, 0, 0), (255, 255, 0), (255, 255, 255), (0, 157, 0), (0, 0, 255)] # This example uses the 8-bit RGB
-my_cmap = create_colormap(colors, bit=True)
+my_cmap = create_colormap(colors)
 plt.pcolormesh(np.random.rand(25, 50), cmap=my_cmap)
 plt.colorbar()
 plt.show()
