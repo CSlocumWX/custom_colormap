@@ -89,7 +89,7 @@ def convert_color(color: Union[str, Sequence, np.ndarray]) -> RGBType:
             matplotlib RGB [0..1]
         """
         if np.issubdtype(color.dtype, np.integer):
-            color /= 255.
+            color = color / 255.
         ccolor = ColorConverter().to_rgb(color)
         return ccolor
 
