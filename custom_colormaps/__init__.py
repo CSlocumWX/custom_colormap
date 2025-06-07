@@ -1,7 +1,6 @@
 """
 Custom Colormaps for Matplotlib.
 
-
 This program shows how to implement custom_colormap and
 custom_breakpoint_colormap, which are functions that
 generates a colormap based on user input.
@@ -34,22 +33,22 @@ def normalize(value: Union[Number, np.ndarray], vmin: Number,
 
     Parameters
     ----------
-    value : array-like
-        The value(s) that need normalizing
+    value : array_like
+        The value(s) that need normalizing.
     vmin : float, optional
-        The minimum value for all values
+        The minimum value for all values.
     vmax : float, optional
-        The maximum value for all values
+        The maximum value for all values.
 
     Returns
     -------
-    value : array-like
-        The normalized value(s)
+    array_like
+        The normalized value(s).
 
     Raises
     ------
     ValueError
-        If value is scaler and vmin/vmax undefined
+        If value is scaler and vmin/vmax undefined.
     """
     #if vmin is None:
     #    vmin = np.min(value)
@@ -66,13 +65,13 @@ def convert_color(color: Union[str, Sequence, np.ndarray]) -> RGBType:
 
     Parameters
     ----------
-    color : str or array-like
-        Color representation
+    color : str or array_like
+        Color representation.
 
     Returns
     -------
-    ccolor : tuple
-        Converted RGB representation of color
+    tuple
+        Converted RGB representation of color (r, g, b).
     """
     def covert_color_array(color: np.ndarray) -> RGBType:
         """
@@ -80,13 +79,13 @@ def convert_color(color: Union[str, Sequence, np.ndarray]) -> RGBType:
 
         Parameters
         ----------
-        color : array-like
-            RGB array color
+        color : array_like
+            RGB array color.
 
         Returns
         -------
-        ccolor : tuple
-            matplotlib RGB [0..1]
+        tuple
+            The matplotlib RGB [0..1].
         """
         if np.issubdtype(color.dtype, np.integer):
             color /= 255.
@@ -99,13 +98,13 @@ def convert_color(color: Union[str, Sequence, np.ndarray]) -> RGBType:
 
         Parameters
         ----------
-        ccolor : list or tuple
-            RGB array color
+        color : list or tuple
+            RGB array color.
 
         Returns
         -------
-        color : tuple
-            matplotlib RGB [0..1]
+        tuple
+            The matplotlib RGB [0..1].
         """
         ccolor = tuple(elem / 255. for elem in color)
         return ccolor
@@ -129,27 +128,27 @@ def create_colormap(colors: Union[Sequence, np.ndarray],
                     reverse: bool = False,
                     name: str = 'custom_colormap') -> LinearSegmentedColormap:
     """
-    Returns a linear custom colormap.
+    Create a linear custom colormap.
 
     Parameters
     ----------
-    colors : array-like
-        An array-like object of colors corresponding to each postion
+    colors : array_like
+        An array_like object of colors corresponding to each postion
         element. Colors can be defined as HEX code, color names, or RGB
         values. RGB data assumes data types are floats for [0..1] or
         integers for [0..255].
-    position : array-like, optional
+    position : array_like, optional
         A list of monotonic position values corresponding to each color.
         If None, linear spacing is assumed.
     reverse : Boolean, default=False
-        If you want to flip the colormap
-    name : string, default='custom_colormap'
-        Name of the colormap
+        If you want to flip the colormap.
+    name : str, default='custom_colormap'
+        Name of the colormap.
 
     Returns
     -------
-    cmap : matplotlib.colors.LinearSegmentedColormap
-        matplotlib colormap instance
+    matplotlib.colors.LinearSegmentedColormap
+        The matplotlib colormap instance.
     """
     if reverse:
         colors = colors[::-1]
@@ -184,12 +183,12 @@ def create_breakpoint_colormap(
 
     Parameters
     ----------
-    colors : array-like
-        An array-like object of color pairs corresponding to each postion
+    colors : array_like
+        An array_like object of color pairs corresponding to each postion
         element. Colors can be defined as HEX code, color names, or RGB
         values. RGB data assumes data types are floats for [0..1] or
         integers for [0..255].
-    position : array-like, optional
+    position : array_like, optional
         A list of monotonic position start-stop pairs corresponding to each
         color pair. If None, linear spacing is assumed.
     name : str, optional
@@ -197,8 +196,8 @@ def create_breakpoint_colormap(
 
     Returns
     -------
-    cmap : matplotlib.colors.LinearSegmentedColormap
-        matplotlib colormap instance
+    matplotlib.colors.LinearSegmentedColormap
+        The matplotlib colormap instance.
     """
     # create position if None
     if position is None:
