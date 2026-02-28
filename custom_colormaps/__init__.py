@@ -14,16 +14,20 @@ Notes
 * 20180307 -- Changed license to BSD 3-clause
 * 20240325 -- Added breakpoint colormap generator
 """
+# Standard Python library
 import ast
 from typing import Optional, Union, Sequence
+# Third-party community packages
 from typing_extensions import TypeAlias
 import numpy as np
 from matplotlib.colors import ColorConverter, LinearSegmentedColormap
 
-Number = Union[int, float, np.integer, np.floating]
-RGBType: TypeAlias = tuple[float, float, float]
 __version__ = "2.0"
 __author__ = "Chris Slocum"
+Number = Union[int, float, np.integer, np.floating]
+RGBType: TypeAlias = tuple[float, float, float]
+MINLEN = 2    # minimum length
+MAX8BIT = 255.0    # maximum 8-bit value
 
 
 def normalize(value: Union[Number, np.ndarray], vmin: Number,
@@ -83,7 +87,7 @@ def convert_color(color: Union[str, Sequence, np.ndarray]) -> RGBType:
             The matplotlib RGB [0..1].
         """
         if np.issubdtype(color.dtype, np.integer):
-            color = color / 255.
+            color = color / MAX8BIT
         return ColorConverter().to_rgb(color)
 
     def covert_color_sequence(color: Sequence) -> RGBType:
@@ -100,7 +104,7 @@ def convert_color(color: Union[str, Sequence, np.ndarray]) -> RGBType:
         tuple
             The matplotlib RGB [0..1].
         """
-        return tuple(elem / 255. for elem in color)
+        return tuple(elem / MAX8BIT for elem in color)
 
     if isinstance(color, np.ndarray):
         ccolor = covert_color_array(color)
@@ -199,9 +203,9 @@ def create_breakpoint_colormap(
         position[:, 1] = tmp[1:]
     if len(position) != len(colors):
         raise ValueError("position length must be the same as colors")
-    if any(len(elem) != 2 for elem in position):
+    if any(len(elem) != MINLEN for elem in position):
         raise ValueError("Each element in position must have a length of 2")
-    if any(len(elem) != 2 for elem in colors):
+    if any(len(elem) != MINLEN for elem in colors):
         raise ValueError("Each element in colors must have a length of 2")
     # get the max/min values from position
     vmin = np.min(position)
