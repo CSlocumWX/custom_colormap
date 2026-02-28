@@ -50,13 +50,8 @@ def normalize(value: Union[Number, np.ndarray], vmin: Number,
     ValueError
         If value is scaler and vmin/vmax undefined.
     """
-    #if vmin is None:
-    #    vmin = np.min(value)
-    #if vmax is None:
-    #    vmax = np.max(value)
     diff = float(vmax - vmin)
-    norm = (value - vmin) / diff
-    return norm
+    return (value - vmin) / diff
 
 
 def convert_color(color: Union[str, Sequence, np.ndarray]) -> RGBType:
@@ -89,8 +84,7 @@ def convert_color(color: Union[str, Sequence, np.ndarray]) -> RGBType:
         """
         if np.issubdtype(color.dtype, np.integer):
             color = color / 255.
-        ccolor = ColorConverter().to_rgb(color)
-        return ccolor
+        return ColorConverter().to_rgb(color)
 
     def covert_color_sequence(color: Sequence) -> RGBType:
         """
@@ -106,8 +100,7 @@ def convert_color(color: Union[str, Sequence, np.ndarray]) -> RGBType:
         tuple
             The matplotlib RGB [0..1].
         """
-        ccolor = tuple(elem / 255. for elem in color)
-        return ccolor
+        return tuple(elem / 255. for elem in color)
 
     if isinstance(color, np.ndarray):
         ccolor = covert_color_array(color)
@@ -170,8 +163,7 @@ def create_colormap(colors: Union[Sequence, np.ndarray],
         segmentdata["red"].append((x, ccolor[0], ccolor[0]))
         segmentdata["green"].append((x, ccolor[1], ccolor[1]))
         segmentdata["blue"].append((x, ccolor[2], ccolor[2]))
-    cmap = LinearSegmentedColormap(name, segmentdata)
-    return cmap
+    return LinearSegmentedColormap(name, segmentdata)
 
 
 def create_breakpoint_colormap(
@@ -236,5 +228,4 @@ def create_breakpoint_colormap(
     segmentdata["red"].append((x, y0[0], y1[0]))
     segmentdata["green"].append((x, y0[1], y1[1]))
     segmentdata["blue"].append((x, y0[2], y1[2]))
-    cmap = LinearSegmentedColormap(name, segmentdata)
-    return cmap
+    return LinearSegmentedColormap(name, segmentdata)
