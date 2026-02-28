@@ -126,7 +126,7 @@ def convert_color(color: Union[str, Sequence, np.ndarray]) -> RGBType:
 def create_colormap(colors: Union[Sequence, np.ndarray],
                     position: Optional[Union[Sequence, np.ndarray]] = None,
                     reverse: bool = False,
-                    name: str = 'custom_colormap') -> LinearSegmentedColormap:
+                    name: str = "custom_colormap") -> LinearSegmentedColormap:
     """
     Create a linear custom colormap.
 
@@ -142,7 +142,7 @@ def create_colormap(colors: Union[Sequence, np.ndarray],
         If None, linear spacing is assumed.
     reverse : Boolean, default=False
         If you want to flip the colormap.
-    name : str, default='custom_colormap'
+    name : str, default="custom_colormap"
         Name of the colormap.
 
     Returns
@@ -163,13 +163,13 @@ def create_colormap(colors: Union[Sequence, np.ndarray],
     if np.isclose(position[0], vmax):
         colors = colors[::-1]
         position = position[::-1]
-    segmentdata: dict = {'red': [], 'green': [], 'blue': []}
+    segmentdata: dict = {"red": [], "green": [], "blue": []}
     for pos, color in zip(position, colors):
         x = normalize(pos, vmin, vmax)
         ccolor = convert_color(color)
-        segmentdata['red'].append((x, ccolor[0], ccolor[0]))
-        segmentdata['green'].append((x, ccolor[1], ccolor[1]))
-        segmentdata['blue'].append((x, ccolor[2], ccolor[2]))
+        segmentdata["red"].append((x, ccolor[0], ccolor[0]))
+        segmentdata["green"].append((x, ccolor[1], ccolor[1]))
+        segmentdata["blue"].append((x, ccolor[2], ccolor[2]))
     cmap = LinearSegmentedColormap(name, segmentdata)
     return cmap
 
@@ -177,7 +177,7 @@ def create_colormap(colors: Union[Sequence, np.ndarray],
 def create_breakpoint_colormap(
         colors: Union[Sequence, np.ndarray],
         position: Optional[Union[Sequence, np.ndarray]] = None,
-        name: str = 'custom_breakpoint_colormap') -> LinearSegmentedColormap:
+        name: str = "custom_breakpoint_colormap") -> LinearSegmentedColormap:
     """
     Create a LinearSegmentedColormap instance with breakpoints.
 
@@ -221,20 +221,20 @@ def create_breakpoint_colormap(
     y0 = (0.0, 0.0, 0.0)
     y1 = (1.0, 1.0, 1.0)
     # color dictionary for LinearSegmentedColormap
-    segmentdata: dict = {'red': [], 'green': [], 'blue': []}
+    segmentdata: dict = {"red": [], "green": [], "blue": []}
     for pos, color in zip(position, colors):
         pos_start = pos[0]
         y1 = convert_color(color[0])
         x = normalize(pos_start, vmin, vmax)
-        segmentdata['red'].append((x, y0[0], y1[0]))
-        segmentdata['green'].append((x, y0[1], y1[1]))
-        segmentdata['blue'].append((x, y0[2], y1[2]))
+        segmentdata["red"].append((x, y0[0], y1[0]))
+        segmentdata["green"].append((x, y0[1], y1[1]))
+        segmentdata["blue"].append((x, y0[2], y1[2]))
         # Update y0
         pos_stop = pos[1]
         y0 = convert_color(color[1])
     x = normalize(pos_stop, vmin, vmax)
-    segmentdata['red'].append((x, y0[0], y1[0]))
-    segmentdata['green'].append((x, y0[1], y1[1]))
-    segmentdata['blue'].append((x, y0[2], y1[2]))
+    segmentdata["red"].append((x, y0[0], y1[0]))
+    segmentdata["green"].append((x, y0[1], y1[1]))
+    segmentdata["blue"].append((x, y0[2], y1[2]))
     cmap = LinearSegmentedColormap(name, segmentdata)
     return cmap
