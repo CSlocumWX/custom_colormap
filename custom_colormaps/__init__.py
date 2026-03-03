@@ -163,7 +163,7 @@ def create_colormap(colors: Union[Sequence, np.ndarray],
         colors = colors[::-1]
         position = position[::-1]
     segmentdata: dict = {"red": [], "green": [], "blue": []}
-    for pos, color in zip(position, colors):
+    for pos, color in zip(position, colors, strict=True):
         x = normalize(pos, vmin, vmax)
         ccolor = convert_color(color)
         segmentdata["red"].append((x, ccolor[0], ccolor[0]))
@@ -220,7 +220,7 @@ def create_breakpoint_colormap(
     y1 = (1.0, 1.0, 1.0)
     # color dictionary for LinearSegmentedColormap
     segmentdata: dict = {"red": [], "green": [], "blue": []}
-    for pos, color in zip(position, colors):
+    for pos, color in zip(position, colors, strict=True):
         pos_start = pos[0]
         y1 = convert_color(color[0])
         x = normalize(pos_start, vmin, vmax)
