@@ -15,11 +15,11 @@ Notes
  * 20240325 -- Added breakpoint colormap generator
  * 20260303 -- Minor updates to improve code
 """
-# Standard Python library
+# Standard library imports
 import ast
 from collections.abc import Sequence
 from typing import Optional, Union
-# Third-party community packages
+# Third party imports
 from typing_extensions import TypeAlias
 import numpy as np
 from matplotlib.colors import ColorConverter, LinearSegmentedColormap
