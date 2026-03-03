@@ -19,10 +19,11 @@ Notes
 import ast
 from collections.abc import Sequence
 from typing import Optional, Union
+
 # Third party imports
-from typing_extensions import TypeAlias
 import numpy as np
 from matplotlib.colors import ColorConverter, LinearSegmentedColormap
+from typing_extensions import TypeAlias
 
 __version__ = "2.0"
 __author__ = "Chris Slocum"
