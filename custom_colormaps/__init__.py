@@ -7,16 +7,18 @@ generates a colormap based on user input.
 
 Notes
 -----
-* 20130411 -- Initial version created
-* 20140313 -- Small changes made and code posted online
-* 20140320 -- Added the ability to set the position of each color
-* 20150724 -- Attempted to make this more Pythonic
-* 20180307 -- Changed license to BSD 3-clause
-* 20240325 -- Added breakpoint colormap generator
+ * 20130411 -- Initial version created
+ * 20140313 -- Small changes made and code posted online
+ * 20140320 -- Added the ability to set the position of each color
+ * 20150724 -- Attempted to make this more Pythonic
+ * 20180307 -- Changed license to BSD 3-clause
+ * 20240325 -- Added breakpoint colormap generator
+ * 20260303 -- Minor updates to improve code
 """
 # Standard Python library
 import ast
-from typing import Optional, Union, Sequence
+from collections.abc import Sequence
+from typing import Optional, Union
 # Third-party community packages
 from typing_extensions import TypeAlias
 import numpy as np
